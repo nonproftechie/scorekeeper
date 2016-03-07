@@ -1,0 +1,20 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "nesher181@gmail.com",
+    "enableMultiJS": false,
+    "longName": "Scorekeeper",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "Scorekeeper",
+    "uuid": "469be44f-2e83-447f-b8b3-e48035277137",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
