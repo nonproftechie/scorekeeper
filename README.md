@@ -1,2 +1,2 @@
 # scorekeeper
-Scorekeeping on your Pebble Time
+Very simple scorekeeping on your Pebble
