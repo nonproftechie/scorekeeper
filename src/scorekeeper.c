@@ -6,6 +6,8 @@ static TextLayer *upper_layer;
 static TextLayer *lower_layer;
 static int upper_num;
 static int lower_num;
+static uint32_t upper_num_key;
+static uint32_t lower_num_key;
 static char s_upper[5];
 static char s_lower[5];
 static bool positive;
@@ -43,7 +45,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
   lower_num += positive ? 1 : -1;
-  snprintf(s_lower, sizeof(s_upper), "%d", lower_num);
+  snprintf(s_lower, sizeof(s_lower), "%d", lower_num);
   text_layer_set_text(lower_layer, s_lower);
 }
 
@@ -58,13 +60,13 @@ static void window_load(Window *window) {
   GRect bounds = layer_get_bounds(window_layer);
 
   upper_layer = text_layer_create((GRect) { .origin = { 0, (bounds.size.h / 2) - 48 - 4 }, .size = { bounds.size.w, 40 } });
-  text_layer_set_text(upper_layer, "0");
+  text_layer_set_text(upper_layer, s_upper);
   text_layer_set_text_alignment(upper_layer, GTextAlignmentCenter);
   text_layer_set_font(upper_layer, fonts_get_system_font(FONT_KEY_LECO_38_BOLD_NUMBERS));
   layer_add_child(window_layer, text_layer_get_layer(upper_layer));
   
   lower_layer = text_layer_create((GRect) { .origin = { 0, (bounds.size.h / 2) + 8 - 4 }, .size = { bounds.size.w, 40 } });
-  text_layer_set_text(lower_layer, "0");
+  text_layer_set_text(lower_layer, s_lower);
   text_layer_set_text_alignment(lower_layer, GTextAlignmentCenter);
   text_layer_set_font(lower_layer, fonts_get_system_font(FONT_KEY_LECO_38_BOLD_NUMBERS));
   layer_add_child(window_layer, text_layer_get_layer(lower_layer));
@@ -78,8 +80,10 @@ static void window_unload(Window *window) {
 
 static void init(void) {
   positive = true;
-  upper_num = 0;
-  lower_num = 0;
+  upper_num = persist_read_int(upper_num_key);
+  lower_num = persist_read_int(lower_num_key);
+  snprintf(s_upper, sizeof(s_upper), "%d", upper_num);
+  snprintf(s_lower, sizeof(s_lower), "%d", lower_num);
   
   window = window_create();
   window_set_click_config_provider(window, click_config_provider);
@@ -87,16 +91,19 @@ static void init(void) {
 	  .load = window_load,
     .unload = window_unload,
   });
-  const bool animated = true;
-  window_stack_push(window, animated);
+  window_stack_push(window, true);
   redraw();
 }
 
 static void deinit(void) {
+  persist_write_int(upper_num_key, upper_num);
+  persist_write_int(lower_num_key, lower_num);
   window_destroy(window);
 }
 
 int main(void) {
+  upper_num_key = 0;
+  lower_num_key = 1;
   init();
   app_event_loop();
   deinit();
