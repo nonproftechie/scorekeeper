@@ -49,10 +49,27 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
   text_layer_set_text(lower_layer, s_lower);
 }
 
+void select_long_click_handler(ClickRecognizerRef recognizer, void *context) {
+  upper_num = 0;
+  lower_num = 0;
+  
+  snprintf(s_upper, sizeof(s_upper), "%d", upper_num);
+  text_layer_set_text(upper_layer, s_upper);
+  
+  snprintf(s_lower, sizeof(s_lower), "%d", lower_num);
+  text_layer_set_text(lower_layer, s_lower);
+  
+  vibes_short_pulse();
+}
+
+void select_long_click_release_handler(ClickRecognizerRef recognizer, void *context) {}
+
 static void click_config_provider(void *context) {
   window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
   window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+  
+  window_long_click_subscribe(BUTTON_ID_SELECT, 700, select_long_click_handler, select_long_click_release_handler);
 }
 
 static void window_load(Window *window) {
