@@ -11,6 +11,7 @@ static uint32_t lower_num_key;
 static char s_upper[5];
 static char s_lower[5];
 static bool positive;
+static StatusBarLayer *s_status_bar;
 
 static GColor get_color(bool positive, bool is_bkg_layer) {
   #if defined(PBL_COLOR)
@@ -30,6 +31,7 @@ static void redraw() {
   text_layer_set_background_color(lower_layer, get_color(positive, true));
   text_layer_set_text_color(upper_layer, get_color(positive, false));
   text_layer_set_text_color(lower_layer, get_color(positive, false));
+  status_bar_layer_set_colors(s_status_bar, get_color(positive, true), get_color(positive, false));
 }
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
@@ -88,11 +90,15 @@ static void window_load(Window *window) {
   text_layer_set_font(lower_layer, fonts_get_system_font(FONT_KEY_LECO_38_BOLD_NUMBERS));
   layer_add_child(window_layer, text_layer_get_layer(lower_layer));
   
+  s_status_bar = status_bar_layer_create();
+  layer_add_child(window_layer, status_bar_layer_get_layer(s_status_bar));
+  
 }
 
 static void window_unload(Window *window) {
   text_layer_destroy(upper_layer);
   text_layer_destroy(lower_layer);
+  status_bar_layer_destroy(s_status_bar);
 }
 
 static void init(void) {
